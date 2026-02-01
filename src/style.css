@@ -229,6 +229,33 @@ body {
     color: #888;
 }
 
+.markdown-body > * + * {
+    margin-top: 1em; /* Adds space between elements */
+}
+
+.markdown-body p {
+    line-height: 1.6;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    line-height: 1.25;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+    padding-left: 1.5em; /* Restore list indentation */
+    margin-bottom: 1em;
+}
+
+/* Fix for the first element having unnecessary top margin */
+.markdown-body > *:first-child {
+    margin-top: 0;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
     .workspace {

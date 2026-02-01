@@ -9,10 +9,14 @@ import {StateEffect} from "@codemirror/state";
 
 import './style.css';
 
+marked.use({
+    breaks: true, // This makes single 'Enter' create a new line
+    gfm: true     // This enables GitHub Flavored Markdown
+});
+
 const editorContainer = document.querySelector<HTMLDivElement>('#editor-wrapper')!;
 const previewContainer = document.querySelector<HTMLDivElement>('#preview-wrapper')!;
 
-// Menu Elements
 const commanderBtn = document.querySelector<HTMLButtonElement>('#commander-btn')!;
 const menuItems = document.querySelector<HTMLDivElement>('#menu-items')!;
 const themeBtn = document.querySelector<HTMLButtonElement>('#theme-btn')!;
@@ -41,9 +45,7 @@ const loadFromURL = (): string => {
 };
 
 const renderMarkdown = (content: string) => {
-    // Parse markdown to HTML
     const rawHtml = marked.parse(content) as string;
-    // Sanitize HTML to prevent XSS attacks
     previewContainer.innerHTML = DOMPurify.sanitize(rawHtml);
 };
 
@@ -71,9 +73,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-
-// --- VIM Settings Logic (Refined) ---
-
 const applyVimSettings = (binding: string) => {
     Vim.unmap('jj', 'insert');
     Vim.unmap('jk', 'insert');
@@ -88,13 +87,10 @@ escBindingSelect.addEventListener('change', (e) => {
     localStorage.setItem('vim-binding', binding);
 });
 
-// Load saved binding
 const savedBinding = localStorage.getItem('vim-binding') || 'default';
 escBindingSelect.value = savedBinding;
 applyVimSettings(savedBinding);
 
-
-// --- Editor Setup (Same Logic, Styling handled by CSS) ---
 let isDark = false;
 
 const onUpdate = EditorView.updateListener.of((v) => {
@@ -120,10 +116,6 @@ const editor = new EditorView({
     parent: editorContainer
 });
 
-
-// --- Feature Handlers ---
-
-// Theme
 themeBtn.addEventListener('click', () => {
     isDark = !isDark;
     document.body.classList.toggle('dark-theme', isDark);
@@ -137,21 +129,18 @@ themeBtn.addEventListener('click', () => {
     });
 });
 
-// Share
 shareBtn.addEventListener('click', async () => {
     await navigator.clipboard.writeText(window.location.href);
     toast.classList.remove('hidden');
     setTimeout(() => toast.classList.add('hidden'), 2000);
-    menuItems.classList.add('hidden'); // Close menu on action
+    menuItems.classList.add('hidden');
 });
 
-// PDF
 pdfBtn.addEventListener('click', () => {
-    menuItems.classList.add('hidden'); // Close menu on action
+    menuItems.classList.add('hidden');
     window.print();
 });
 
-// Initial Theme Check
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    themeBtn.click(); // Programmatically click to sync state
+    themeBtn.click();
 }
