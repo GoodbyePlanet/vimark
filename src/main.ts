@@ -22,6 +22,7 @@ const menuItems = document.querySelector<HTMLDivElement>('#menu-items')!;
 const themeBtn = document.querySelector<HTMLButtonElement>('#theme-btn')!;
 const shareBtn = document.querySelector<HTMLButtonElement>('#share-btn')!;
 const pdfBtn = document.querySelector<HTMLButtonElement>('#pdf-btn')!;
+const githubBtn = document.querySelector<HTMLButtonElement>('#github-btn')!;
 const escBindingSelect = document.querySelector<HTMLSelectElement>('#esc-binding')!;
 const toast = document.querySelector<HTMLDivElement>('#toast')!;
 
@@ -139,6 +140,11 @@ shareBtn.addEventListener('click', async () => {
 pdfBtn.addEventListener('click', () => {
     menuItems.classList.add('hidden');
     window.print();
+});
+
+githubBtn.addEventListener('click', () => {
+    window.open('https://github.com/GoodbyePlanet/vimark', '_blank');
+    menuItems.classList.add('hidden');
 });
 
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {

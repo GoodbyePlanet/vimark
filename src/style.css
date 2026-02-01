@@ -8,11 +8,11 @@
 }
 
 body.dark-theme {
-    --bg: #111111;
-    --fg: #e0e0e0;
-    --surface: #1a1a1a;
-    --border: #333333;
-    --selection: #333333;
+    --bg: #1e1e1e;
+    --fg: #d4d4d4;
+    --surface: #2d2d2d;
+    --border: #404040;
+    --selection: #3a3d41;
 }
 
 * {
@@ -37,7 +37,6 @@ body {
     position: relative;
 }
 
-/* --- Workspace --- */
 .workspace {
     display: flex;
     height: 100%;
@@ -81,23 +80,21 @@ body {
     background-color: var(--selection) !important;
 }
 
-/* --- The Commander (Floating Menu) --- */
 .commander {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
     display: flex;
-    flex-direction: column-reverse; /* Menu opens upwards */
+    flex-direction: column-reverse;
     align-items: flex-end;
     gap: 10px;
     z-index: 100;
 }
 
-/* Trigger Button */
 #commander-btn {
     width: 50px;
     height: 50px;
-    border-radius: 50%; /* Circle */
+    border-radius: 50%;
     background: var(--fg);
     color: var(--bg);
     border: none;
@@ -106,8 +103,8 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s;
-    letter-spacing: -2px; /* Tighten the colons */
-    padding-bottom: 4px; /* Optical alignment */
+    letter-spacing: -2px;
+    padding-bottom: 4px;
 }
 
 #commander-btn:hover {
@@ -186,7 +183,6 @@ body {
     cursor: pointer;
 }
 
-/* --- Toast --- */
 #toast {
     position: fixed;
     top: 2rem;
@@ -207,7 +203,6 @@ body {
     pointer-events: none;
 }
 
-/* --- Markdown Minimalist --- */
 .markdown-body {
     color: var(--fg);
     background: transparent !important;
@@ -230,7 +225,7 @@ body {
 }
 
 .markdown-body > * + * {
-    margin-top: 1em; /* Adds space between elements */
+    margin-top: 1em;
 }
 
 .markdown-body p {
@@ -247,16 +242,27 @@ body {
 
 .markdown-body ul,
 .markdown-body ol {
-    padding-left: 1.5em; /* Restore list indentation */
+    padding-left: 1.5em;
     margin-bottom: 1em;
 }
 
-/* Fix for the first element having unnecessary top margin */
 .markdown-body > *:first-child {
     margin-top: 0;
 }
 
-/* Mobile */
+/* --- CodeMirror Selection Override --- */
+.cm-selectionBackground {
+    background-color: var(--selection) !important;
+}
+
+.cm-editor ::selection {
+    background-color: var(--selection) !important;
+}
+
+.markdown-body ::selection {
+    background-color: var(--selection);
+}
+
 @media (max-width: 768px) {
     .workspace {
         flex-direction: column;
