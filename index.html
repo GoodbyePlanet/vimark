@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VimMD Notes</title>
+</head>
+<body class="light-theme">
+<div id="app">
+    <header class="toolbar">
+        <div class="brand">
+            <strong>VimMD</strong> <span class="badge">VIM MODE</span>
+        </div>
+        <div class="actions">
+            <button id="theme-btn" title="Toggle Theme">🌙/☀️</button>
+            <button id="share-btn" title="Copy URL to Clipboard">🔗 Share</button>
+            <button id="pdf-btn" title="Export to PDF">📄 PDF</button>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <div id="editor-wrapper"></div>
+        <div id="preview-wrapper" class="markdown-body"></div>
+    </main>
+
+    <div id="toast" class="hidden">Link copied!</div>
+</div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
