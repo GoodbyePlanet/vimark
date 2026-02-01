@@ -1,29 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VimMD Notes</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Vimark</title>
 </head>
 <body class="light-theme">
 <div id="app">
-    <header class="toolbar">
-        <div class="brand">
-            <strong>VimMD</strong> <span class="badge">VIM MODE</span>
-        </div>
-        <div class="actions">
-            <button id="theme-btn" title="Toggle Theme">🌙/☀️</button>
-            <button id="share-btn" title="Copy URL to Clipboard">🔗 Share</button>
-            <button id="pdf-btn" title="Export to PDF">📄 PDF</button>
-        </div>
-    </header>
 
     <main class="workspace">
         <div id="editor-wrapper"></div>
         <div id="preview-wrapper" class="markdown-body"></div>
     </main>
 
-    <div id="toast" class="hidden">Link copied!</div>
+    <div class="commander">
+
+        <div id="menu-items" class="menu hidden">
+            <button id="theme-btn"><span>Theme</span> <span class="key">T</span></button>
+            <button id="share-btn"><span>Share Link</span> <span class="key">Y</span></button>
+            <button id="pdf-btn"><span>Export PDF</span> <span class="key">P</span></button>
+            <hr class="divider">
+            <div class="vim-setting">
+                <span>Vim Exit:</span>
+                <select id="esc-binding">
+                    <option value="default">Esc</option>
+                    <option value="jj">jj</option>
+                    <option value="jk">jk</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="commander-btn" title="Menu">::</button>
+    </div>
+
+    <div id="toast" class="hidden">Link Copied</div>
 </div>
 <script type="module" src="/src/main.ts"></script>
 </body>

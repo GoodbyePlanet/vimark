@@ -1,125 +1,257 @@
 :root {
-    /* Light Theme Variables */
-    --bg-color: #ffffff;
-    --text-color: #24292f;
-    --border-color: #d0d7de;
-    --toolbar-bg: #f6f8fa;
-    --preview-bg: #ffffff;
-    --editor-bg: #ffffff;
-    --accent: #0969da;
+    /* Monochromatic Palette */
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --surface: #f4f4f4;
+    --border: #e0e0e0;
+    --selection: #eeeeee;
 }
 
 body.dark-theme {
-    /* Dark Theme Variables */
-    --bg-color: #0d1117;
-    --text-color: #c9d1d9;
-    --border-color: #30363d;
-    --toolbar-bg: #161b22;
-    --preview-bg: #0d1117;
-    --editor-bg: #0d1117;
-    --accent: #58a6ff;
+    --bg: #111111;
+    --fg: #e0e0e0;
+    --surface: #1a1a1a;
+    --border: #333333;
+    --selection: #333333;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg);
+    color: var(--fg);
     height: 100vh;
     overflow: hidden;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background 0.3s, color 0.3s;
 }
 
-#app { display: flex; flex-direction: column; height: 100%; }
-
-/* Toolbar */
-.toolbar {
-    height: 50px;
-    background: var(--toolbar-bg);
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 1rem;
+#app {
+    height: 100%;
+    width: 100%;
+    position: relative;
 }
 
-.brand { font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
-.badge { font-size: 0.7rem; background: var(--accent); color: white; padding: 2px 6px; border-radius: 4px; }
-
-.actions button {
-    background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    padding: 6px 12px;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-left: 5px;
-    font-size: 0.9rem;
-}
-
-.actions button:hover { border-color: var(--accent); color: var(--accent); }
-
-/* Workspace (Split View) */
+/* --- Workspace --- */
 .workspace {
-    flex: 1;
     display: flex;
-    overflow: hidden;
+    height: 100%;
+    width: 100%;
 }
 
 #editor-wrapper, #preview-wrapper {
-    width: 50%;
+    flex: 1;
     height: 100%;
     overflow-y: auto;
+    transition: width 0.3s;
 }
 
-#editor-wrapper { border-right: 1px solid var(--border-color); background: var(--editor-bg); }
-#preview-wrapper { padding: 2rem; background: var(--preview-bg); }
+#editor-wrapper {
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+}
 
-/* CodeMirror Adjustments */
-.cm-editor { height: 100%; font-size: 14px; }
-.cm-scroller { font-family: 'Fira Code', monospace; }
+#preview-wrapper {
+    padding: 1rem 1rem;
+    background: var(--bg);
+}
 
-/* Markdown Preview Typography (Simple Reset) */
-.markdown-body h1, .markdown-body h2, .markdown-body h3 { border-bottom: 1px solid var(--border-color); padding-bottom: .3em; margin-top: 24px; }
-.markdown-body p { margin-bottom: 16px; line-height: 1.5; }
-.markdown-body code { background: rgba(175, 184, 193, 0.2); padding: .2em .4em; border-radius: 6px; }
-.markdown-body pre { background: var(--toolbar-bg); padding: 16px; overflow: auto; border-radius: 6px; }
-.markdown-body blockquote { border-left: .25em solid var(--border-color); padding: 0 1em; color: #57606a; }
+.cm-editor {
+    height: 100%;
+    background: transparent !important;
+}
 
-/* Toast Notification */
+.cm-scroller {
+    font-family: 'Fira Code', monospace;
+    line-height: 1.6;
+}
+
+.cm-gutters {
+    background: var(--bg) !important;
+    border-right: 1px solid var(--border) !important;
+    color: #888 !important;
+}
+
+.cm-activeLine, .cm-activeLineGutter {
+    background-color: var(--selection) !important;
+}
+
+/* --- The Commander (Floating Menu) --- */
+.commander {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    flex-direction: column-reverse; /* Menu opens upwards */
+    align-items: flex-end;
+    gap: 10px;
+    z-index: 100;
+}
+
+/* Trigger Button */
+#commander-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Circle */
+    background: var(--fg);
+    color: var(--bg);
+    border: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s;
+    letter-spacing: -2px; /* Tighten the colons */
+    padding-bottom: 4px; /* Optical alignment */
+}
+
+#commander-btn:hover {
+    transform: scale(1.05);
+}
+
+#commander-btn:active {
+    transform: scale(0.95);
+}
+
+/* The Menu Pop-up */
+.menu {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    width: 200px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+    transform-origin: bottom right;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.menu.hidden {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+    pointer-events: none;
+}
+
+/* Menu Items */
+.menu button {
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    padding: 10px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.menu button:hover {
+    background: var(--surface);
+}
+
+.menu button .key {
+    opacity: 0.5;
+    font-size: 0.8rem;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 4px 0;
+}
+
+.vim-setting {
+    padding: 10px;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vim-setting select {
+    background: var(--surface);
+    border: none;
+    color: var(--fg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* --- Toast --- */
 #toast {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--accent);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--fg);
+    color: var(--bg);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
     opacity: 1;
-    transition: opacity 0.5s;
+    transition: opacity 0.3s;
 }
-#toast.hidden { opacity: 0; pointer-events: none; }
 
-/* Responsive Mobile */
+#toast.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* --- Markdown Minimalist --- */
+.markdown-body {
+    color: var(--fg);
+    background: transparent !important;
+}
+
+.markdown-body a {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+}
+
+.markdown-body pre {
+    background: var(--surface) !important;
+    border-radius: 4px;
+}
+
+.markdown-body blockquote {
+    border-left-color: var(--fg) !important;
+    color: #888;
+}
+
+/* Mobile */
 @media (max-width: 768px) {
-    .workspace { flex-direction: column; }
-    #editor-wrapper, #preview-wrapper { width: 100%; height: 50%; }
-    #editor-wrapper { border-right: none; border-bottom: 1px solid var(--border-color); }
+    .workspace {
+        flex-direction: column;
+    }
+
+    #preview-wrapper {
+        padding: 2rem;
+    }
+
+    .commander {
+        bottom: 1.5rem;
+        right: 1.5rem;
+    }
 }
 
-/* Print Styles for PDF Export */
 @media print {
-    .toolbar, #editor-wrapper, #toast { display: none !important; }
-    .workspace { display: block; height: auto; overflow: visible; }
+    .commander, #editor-wrapper, #toast {
+        display: none;
+    }
+
     #preview-wrapper {
         width: 100%;
-        height: auto;
-        overflow: visible;
-        border: none;
         padding: 0;
-        color: black;
-        background: white;
     }
-    body { background: white; height: auto; }
 }

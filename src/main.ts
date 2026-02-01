@@ -1,33 +1,27 @@
 import {basicSetup, EditorView} from "codemirror";
 import {markdown} from "@codemirror/lang-markdown";
-import {vim} from "@replit/codemirror-vim";
+import {vim, Vim} from "@replit/codemirror-vim";
 import {oneDark} from "@codemirror/theme-one-dark";
 import {marked} from "marked";
 import LZString from "lz-string";
 import DOMPurify from "dompurify";
-import './style.css';
-// Need StateEffect to reconfigure plugins dynamically
 import {StateEffect} from "@codemirror/state";
 
-// --- Configuration & DOM Elements ---
+import './style.css';
+
 const editorContainer = document.querySelector<HTMLDivElement>('#editor-wrapper')!;
 const previewContainer = document.querySelector<HTMLDivElement>('#preview-wrapper')!;
+
+// Menu Elements
+const commanderBtn = document.querySelector<HTMLButtonElement>('#commander-btn')!;
+const menuItems = document.querySelector<HTMLDivElement>('#menu-items')!;
 const themeBtn = document.querySelector<HTMLButtonElement>('#theme-btn')!;
 const shareBtn = document.querySelector<HTMLButtonElement>('#share-btn')!;
 const pdfBtn = document.querySelector<HTMLButtonElement>('#pdf-btn')!;
+const escBindingSelect = document.querySelector<HTMLSelectElement>('#esc-binding')!;
 const toast = document.querySelector<HTMLDivElement>('#toast')!;
 
-// Default Welcome Message
-const DEFAULT_TEXT = `# Welcome to VimMD
-
-* **Vim Mode**: Enabled by default (i to insert, :w to save/sync).
-* **Share**: Everything is stored in the URL. Copy it to share.
-* **Export**: Click PDF to print/save.
-
-## Try writing here...
-`;
-
-// --- State Management (URL Hashing) ---
+const DEFAULT_MESSAGE = `## Try writing here...`;
 
 /**
  * Compresses content and updates browser URL hash.
@@ -38,18 +32,13 @@ const updateURL = (content: string) => {
     window.history.replaceState(null, '', `#${compressed}`);
 };
 
-/**
- * Decodes content from browser URL hash.
- */
 const loadFromURL = (): string => {
     const hash = window.location.hash.slice(1); // Remove '#'
-    if (!hash) return DEFAULT_TEXT;
+    if (!hash) return DEFAULT_MESSAGE;
 
     const decompressed = LZString.decompressFromEncodedURIComponent(hash);
-    return decompressed || DEFAULT_TEXT;
+    return decompressed || DEFAULT_MESSAGE;
 };
-
-// --- Markdown Rendering ---
 
 const renderMarkdown = (content: string) => {
     // Parse markdown to HTML
@@ -58,11 +47,56 @@ const renderMarkdown = (content: string) => {
     previewContainer.innerHTML = DOMPurify.sanitize(rawHtml);
 };
 
-// --- Editor Initialization ---
+const toggleMenu = () => {
+    const isHidden = menuItems.classList.contains('hidden');
+    if (isHidden) {
+        menuItems.classList.remove('hidden');
+        // Rotate button animation
+        commanderBtn.style.transform = 'rotate(90deg)';
+    } else {
+        menuItems.classList.add('hidden');
+        commanderBtn.style.transform = 'rotate(0deg)';
+    }
+};
 
+commanderBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
+});
+
+document.addEventListener('click', (e) => {
+    if (!menuItems.contains(e.target as Node) && e.target !== commanderBtn) {
+        menuItems.classList.add('hidden');
+        commanderBtn.style.transform = 'rotate(0deg)';
+    }
+});
+
+
+// --- VIM Settings Logic (Refined) ---
+
+const applyVimSettings = (binding: string) => {
+    Vim.unmap('jj', 'insert');
+    Vim.unmap('jk', 'insert');
+    if (binding !== 'default') {
+        Vim.map(binding, '<Esc>', 'insert');
+    }
+};
+
+escBindingSelect.addEventListener('change', (e) => {
+    const binding = (e.target as HTMLSelectElement).value;
+    applyVimSettings(binding);
+    localStorage.setItem('vim-binding', binding);
+});
+
+// Load saved binding
+const savedBinding = localStorage.getItem('vim-binding') || 'default';
+escBindingSelect.value = savedBinding;
+applyVimSettings(savedBinding);
+
+
+// --- Editor Setup (Same Logic, Styling handled by CSS) ---
 let isDark = false;
 
-// We create a view update listener to handle typing
 const onUpdate = EditorView.updateListener.of((v) => {
     if (v.docChanged) {
         const content = v.state.doc.toString();
@@ -71,72 +105,53 @@ const onUpdate = EditorView.updateListener.of((v) => {
     }
 });
 
-// Initial content load
 const initialContent = loadFromURL();
+renderMarkdown(initialContent);
 
-// Setup CodeMirror
 const editor = new EditorView({
     doc: initialContent,
     extensions: [
-        basicSetup,             // Line numbers, fold gutter, brackets, etc.
-        vim(),                  // VIM Mode (Essential requirement)
-        markdown(),             // Markdown syntax highlighting
-        EditorView.lineWrapping,// Wrap long lines
-        onUpdate                // Listener for changes
-        // Note: Theme is applied dynamically below
+        basicSetup,
+        vim(),
+        markdown(),
+        EditorView.lineWrapping,
+        onUpdate
     ],
     parent: editorContainer
 });
 
-// Trigger initial render
-renderMarkdown(initialContent);
-
 
 // --- Feature Handlers ---
 
-// 1. Theme Toggling
-const toggleTheme = () => {
+// Theme
+themeBtn.addEventListener('click', () => {
     isDark = !isDark;
     document.body.classList.toggle('dark-theme', isDark);
     document.body.classList.toggle('light-theme', !isDark);
 
-    // Reconfigure editor theme (CodeMirror needs explicit extension reconfig for internal styling)
     editor.dispatch({
         effects: StateEffect.reconfigure.of([
-            basicSetup,
-            vim(),
-            markdown(),
-            EditorView.lineWrapping,
-            onUpdate,
-            isDark ? oneDark : [] // Apply OneDark theme extension only if dark mode
+            basicSetup, vim(), markdown(), EditorView.lineWrapping, onUpdate,
+            isDark ? oneDark : []
         ])
     });
-};
-
-themeBtn.addEventListener('click', toggleTheme);
-
-// 2. Share Functionality
-shareBtn.addEventListener('click', async () => {
-    try {
-        await navigator.clipboard.writeText(window.location.href);
-        showToast();
-    } catch (err) {
-        console.error('Failed to copy', err);
-    }
 });
 
-const showToast = () => {
+// Share
+shareBtn.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(window.location.href);
     toast.classList.remove('hidden');
     setTimeout(() => toast.classList.add('hidden'), 2000);
-};
+    menuItems.classList.add('hidden'); // Close menu on action
+});
 
-// 3. PDF Export
+// PDF
 pdfBtn.addEventListener('click', () => {
-    // We rely on CSS @media print to hide the editor/toolbar and format the preview
+    menuItems.classList.add('hidden'); // Close menu on action
     window.print();
 });
 
-// Handle initial theme check (optional system preference)
+// Initial Theme Check
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    toggleTheme();
+    themeBtn.click(); // Programmatically click to sync state
 }
