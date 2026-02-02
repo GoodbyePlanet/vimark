@@ -113,6 +113,37 @@ document.addEventListener('click', (e) => {
     }
 });
 
+document.addEventListener('keydown', (e) => {
+    // 1. Guard: Only run if the menu is actually OPEN
+    if (menuItems.classList.contains('hidden')) return;
+
+    const key = e.key.toLowerCase();
+
+    switch (key) {
+        case 't':
+            e.preventDefault();
+            themeBtn.click();
+            break;
+        case 'y':
+            e.preventDefault();
+            shareBtn.click();
+            break;
+        case 'p':
+            e.preventDefault();
+            pdfBtn.click();
+            break;
+        case 'g':
+            e.preventDefault();
+            githubBtn.click();
+            break;
+        case 'escape':
+            e.preventDefault();
+            menuItems.classList.add('hidden');
+            commanderBtn.style.transform = 'rotate(0deg)';
+            break;
+    }
+});
+
 const applyVimSettings = (binding: string) => {
     Vim.unmap('jj', 'insert');
     Vim.unmap('jk', 'insert');
