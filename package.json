@@ -2,6 +2,7 @@
   "name": "vinote",
   "private": true,
   "version": "0.0.0",
+  "url": "https://vimark-two.vercel.app/",
   "type": "module",
   "scripts": {
     "dev": "vite",

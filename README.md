@@ -2,6 +2,8 @@
 
 A lightweight, client-side markdown editor featuring VIM keybindings and URL-based state management.
 
+[Try it out!](https://vimark-two.vercel.app/)
+
 ![editor.png](editor.png)
 
 ## Features
