@@ -1,41 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <title>Vimark</title>
-</head>
-<body class="light-theme">
-<div id="app">
-
-    <main class="workspace">
+  </head>
+  <body class="light-theme">
+    <div id="app">
+      <main class="workspace">
         <div id="editor-wrapper"></div>
         <div id="preview-wrapper" class="markdown-body"></div>
-    </main>
+      </main>
 
-    <div class="commander">
-
+      <div class="commander">
         <div id="menu-items" class="menu hidden">
-            <button id="theme-btn"><span>Theme</span> <span class="key">T</span></button>
-            <button id="share-btn"><span>Share Link</span> <span class="key">Y</span></button>
-            <button id="pdf-btn"><span>Export PDF</span> <span class="key">P</span></button>
-            <button id="github-btn"><span>GitHub</span> <span class="key">G</span></button>
-            <hr class="divider">
-            <div class="vim-setting">
-                <span>Vim Exit:</span>
-                <select id="esc-binding">
-                    <option value="default">Esc</option>
-                    <option value="jj">jj</option>
-                    <option value="jk">jk</option>
-                </select>
-            </div>
+          <button id="theme-btn"><span>Theme</span> <span class="key">T</span></button>
+          <button id="share-btn"><span>Share Link</span> <span class="key">Y</span></button>
+          <button id="pdf-btn"><span>Export PDF</span> <span class="key">P</span></button>
+          <button id="github-btn"><span>GitHub</span> <span class="key">G</span></button>
+          <hr class="divider" />
+          <div class="vim-setting">
+            <span>Vim Exit:</span>
+            <select id="esc-binding">
+              <option value="default">Esc</option>
+              <option value="jj">jj</option>
+              <option value="jk">jk</option>
+            </select>
+          </div>
+          <hr class="divider" />
+          <div class="version">
+            <span>Version:</span>
+            <span>v1.0.0</span>
+          </div>
         </div>
-
         <button id="commander-btn" title="Menu">::</button>
-    </div>
+      </div>
 
-    <div id="toast" class="hidden">Link Copied</div>
-</div>
-<script type="module" src="/src/main.ts"></script>
-</body>
+      <div id="toast" class="hidden">Link Copied</div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>
