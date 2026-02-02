@@ -1,7 +1,8 @@
 import {basicSetup, EditorView} from "codemirror";
 import {markdown} from "@codemirror/lang-markdown";
 import {vim, Vim} from "@replit/codemirror-vim";
-import {oneDark} from "@codemirror/theme-one-dark";
+import {HighlightStyle, syntaxHighlighting} from "@codemirror/language";
+import {tags as t} from "@lezer/highlight";
 import {marked} from "marked";
 import LZString from "lz-string";
 import DOMPurify from "dompurify";
@@ -10,9 +11,47 @@ import {StateEffect} from "@codemirror/state";
 import './style.css';
 
 marked.use({
-    breaks: true, // This makes single 'Enter' create a new line
-    gfm: true     // This enables GitHub Flavored Markdown
+    breaks: true,
+    gfm: true
 });
+
+const blueThemeBase = EditorView.theme({
+    "&": {
+        color: "#EEEEEE",
+        backgroundColor: "#222831"
+    },
+    ".cm-content": {
+        caretColor: "#76ABAE"
+    },
+    "&.cm-focused .cm-cursor": {
+        borderLeftColor: "#76ABAE"
+    },
+    "&.cm-focused .cm-selectionBackground, ::selection": {
+        backgroundColor: "#3E444F !important"
+    },
+    ".cm-gutters": {
+        backgroundColor: "#222831",
+        color: "#545862",
+        border: "none"
+    }
+}, {dark: true});
+
+const blueHighlightStyle = HighlightStyle.define([
+    {
+        tag: [t.heading1, t.heading2, t.heading3, t.heading4, t.heading5, t.heading6],
+        color: "#76ABAE", fontWeight: "bold"
+    },
+    {tag: t.processingInstruction, color: "#19c9c9", fontWeight: "bold"},
+    {tag: t.keyword, color: "#93A1A1"},
+    {tag: t.string, color: "#EEEEEE"},
+    {tag: t.comment, color: "#5F6C75", fontStyle: "italic"},
+    {tag: t.strong, color: "#76ABAE", fontWeight: "bold"},
+    {tag: [t.url, t.link], color: "#76ABAE", textDecoration: "underline"},
+    {tag: t.variableName, color: "#D1D5DB"},
+    {tag: t.function(t.variableName), color: "#A7C5C9"}
+]);
+
+const blueDarkTheme = [blueThemeBase, syntaxHighlighting(blueHighlightStyle)];
 
 const editorContainer = document.querySelector<HTMLDivElement>('#editor-wrapper')!;
 const previewContainer = document.querySelector<HTMLDivElement>('#preview-wrapper')!;
@@ -125,7 +164,7 @@ themeBtn.addEventListener('click', () => {
     editor.dispatch({
         effects: StateEffect.reconfigure.of([
             basicSetup, vim(), markdown(), EditorView.lineWrapping, onUpdate,
-            isDark ? oneDark : []
+            isDark ? blueDarkTheme : []
         ])
     });
 });

@@ -8,11 +8,16 @@
 }
 
 body.dark-theme {
-    --bg: #1e1e1e;
-    --fg: #d4d4d4;
-    --surface: #2d2d2d;
-    --border: #404040;
-    --selection: #3a3d41;
+    --bg: #222831;
+    --fg: #EEEEEE;
+    --surface: #31363F;
+    --border: #31363F;
+    --selection: #3E444F;
+}
+
+body.dark-theme ::selection {
+    color: #FFFFFF !important;
+    background-color: var(--selection) !important;
 }
 
 * {
