@@ -1,6 +1,8 @@
-# vimark - URL Based VIM Notes
+# vimark - URL-Based Notes
 
 A lightweight, client-side markdown editor featuring VIM keybindings and URL-based state management.
+
+![editor.png](editor.png)
 
 ## Features
 
