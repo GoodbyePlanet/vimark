@@ -127,48 +127,6 @@ escBindingSelect.addEventListener('change', (e) => {
     localStorage.setItem('vim-binding', binding);
 });
 
-const savedBinding = localStorage.getItem('vim-binding') || 'default';
-escBindingSelect.value = savedBinding;
-applyVimSettings(savedBinding);
-
-let isDark = false;
-
-const onUpdate = EditorView.updateListener.of((v) => {
-    if (v.docChanged) {
-        const content = v.state.doc.toString();
-        renderMarkdown(content);
-        updateURL(content);
-    }
-});
-
-const initialContent = loadFromURL();
-renderMarkdown(initialContent);
-
-const editor = new EditorView({
-    doc: initialContent,
-    extensions: [
-        basicSetup,
-        vim(),
-        markdown(),
-        EditorView.lineWrapping,
-        onUpdate
-    ],
-    parent: editorContainer
-});
-
-themeBtn.addEventListener('click', () => {
-    isDark = !isDark;
-    document.body.classList.toggle('dark-theme', isDark);
-    document.body.classList.toggle('light-theme', !isDark);
-
-    editor.dispatch({
-        effects: StateEffect.reconfigure.of([
-            basicSetup, vim(), markdown(), EditorView.lineWrapping, onUpdate,
-            isDark ? blueDarkTheme : []
-        ])
-    });
-});
-
 shareBtn.addEventListener('click', async () => {
     await navigator.clipboard.writeText(window.location.href);
     toast.classList.remove('hidden');
@@ -186,6 +144,53 @@ githubBtn.addEventListener('click', () => {
     menuItems.classList.add('hidden');
 });
 
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    themeBtn.click();
-}
+const savedBinding = localStorage.getItem('vim-binding') || 'default';
+escBindingSelect.value = savedBinding;
+applyVimSettings(savedBinding);
+
+const onUpdate = EditorView.updateListener.of((v) => {
+    if (v.docChanged) {
+        const content = v.state.doc.toString();
+        renderMarkdown(content);
+        updateURL(content);
+    }
+});
+
+const savedTheme = localStorage.getItem('theme');
+const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+let isDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
+
+const initialContent = loadFromURL();
+renderMarkdown(initialContent);
+document.body.classList.toggle('dark-theme', isDark);
+document.body.classList.toggle('light-theme', !isDark);
+
+const editor = new EditorView({
+    doc: initialContent,
+    extensions: [
+        basicSetup,
+        vim(),
+        markdown(),
+        EditorView.lineWrapping,
+        onUpdate,
+        isDark ? blueDarkTheme : []
+    ],
+    parent: editorContainer
+});
+
+themeBtn.addEventListener('click', () => {
+    isDark = !isDark;
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    document.body.classList.toggle('dark-theme', isDark);
+    document.body.classList.toggle('light-theme', !isDark);
+
+    editor.dispatch({
+        effects: StateEffect.reconfigure.of([
+            basicSetup,
+            vim(),
+            markdown(),
+            EditorView.lineWrapping, onUpdate,
+            isDark ? blueDarkTheme : []
+        ])
+    });
+});
