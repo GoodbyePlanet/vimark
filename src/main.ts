@@ -4,7 +4,7 @@ import { vim, Vim } from '@replit/codemirror-vim';
 import { StateEffect } from '@codemirror/state';
 
 import { blueDarkTheme } from './theme';
-import { loadFromURL, updateURL } from './url-state';
+import {loadFromURL, updateURL} from './url-state';
 import { renderMarkdownTo } from './markdown-engine';
 import './style.css';
 
@@ -12,6 +12,7 @@ const editorContainer = document.querySelector<HTMLDivElement>('#editor-wrapper'
 const previewContainer = document.querySelector<HTMLDivElement>('#preview-wrapper')!;
 const commanderBtn = document.querySelector<HTMLButtonElement>('#commander-btn')!;
 const menuItems = document.querySelector<HTMLDivElement>('#menu-items')!;
+const newNoteBtn = document.querySelector<HTMLButtonElement>('#new-note-btn')!;
 const themeBtn = document.querySelector<HTMLButtonElement>('#theme-btn')!;
 const shareBtn = document.querySelector<HTMLButtonElement>('#share-btn')!;
 const pdfBtn = document.querySelector<HTMLButtonElement>('#pdf-btn')!;
@@ -78,6 +79,10 @@ document.addEventListener('keydown', (e) => {
 
   const key = e.key.toLowerCase();
   switch (key) {
+    case 'n':
+      e.preventDefault();
+      newNoteBtn.click();
+      break;
     case 't':
       e.preventDefault();
       themeBtn.click();
@@ -153,4 +158,19 @@ pdfBtn.addEventListener('click', () => {
 githubBtn.addEventListener('click', () => {
   window.open('https://github.com/GoodbyePlanet/vimark', '_blank');
   menuItems.classList.add('hidden');
+});
+
+newNoteBtn.addEventListener('click', () => {
+  editor.dispatch({
+      changes: {
+          from: 0,
+          to: editor.state.doc.length,
+          insert: ""
+      }
+  });
+
+  menuItems.classList.add('hidden');
+  commanderBtn.style.transform = 'rotate(0deg)';
+
+  editor.focus();
 });
