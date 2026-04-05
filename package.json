@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "serve dist"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.5",
@@ -23,6 +24,7 @@
     "codemirror": "^6.0.2",
     "dompurify": "^3.3.1",
     "lz-string": "^1.5.0",
-    "marked": "^17.0.1"
+    "marked": "^17.0.1",
+    "serve": "^14.2.6"
   }
 }
