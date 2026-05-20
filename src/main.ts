@@ -5,7 +5,7 @@ import { StateEffect } from '@codemirror/state';
 
 import { blueDarkTheme } from './theme';
 import {loadFromURL, updateURL} from './url-state';
-import { renderMarkdownTo } from './markdown-engine';
+import { renderMarkdownTo, setupAnchorScrolling } from './markdown-engine';
 import './style.css';
 
 const editorContainer = document.querySelector<HTMLDivElement>('#editor-wrapper')!;
@@ -24,6 +24,7 @@ const toast = document.querySelector<HTMLDivElement>('#toast')!;
 
 const initialContent = loadFromURL();
 renderMarkdownTo(initialContent, previewContainer);
+setupAnchorScrolling(previewContainer);
 
 let isFocused = localStorage.getItem('focus-mode') === 'true';
 if (isFocused) {
