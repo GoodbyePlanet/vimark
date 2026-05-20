@@ -59,6 +59,7 @@ body {
   flex: 1;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   transition: width 0.3s;
 }
 
@@ -68,7 +69,7 @@ body {
 }
 
 #preview-wrapper {
-  padding: 1rem 1rem;
+  padding: 1rem;
   background: var(--bg);
 }
 
@@ -232,6 +233,7 @@ body {
 .markdown-body pre {
   background: var(--surface) !important;
   border-radius: 4px;
+  overflow-x: auto;
 }
 
 .markdown-body blockquote {
@@ -291,7 +293,7 @@ body {
 .workspace.focus-mode #preview-wrapper {
   flex: 1;
   border-left: none;
-  max-width: 720px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 1rem 2rem;
 }
