@@ -17,11 +17,19 @@ const themeBtn = document.querySelector<HTMLButtonElement>('#theme-btn')!;
 const shareBtn = document.querySelector<HTMLButtonElement>('#share-btn')!;
 const pdfBtn = document.querySelector<HTMLButtonElement>('#pdf-btn')!;
 const githubBtn = document.querySelector<HTMLButtonElement>('#github-btn')!;
+const focusBtn = document.querySelector<HTMLButtonElement>('#focus-btn')!;
+const workspace = document.querySelector<HTMLElement>('.workspace')!;
 const escBindingSelect = document.querySelector<HTMLSelectElement>('#esc-binding')!;
 const toast = document.querySelector<HTMLDivElement>('#toast')!;
 
 const initialContent = loadFromURL();
 renderMarkdownTo(initialContent, previewContainer);
+
+let isFocused = localStorage.getItem('focus-mode') === 'true';
+if (isFocused) {
+  workspace.classList.add('focus-mode');
+  focusBtn.classList.add('active');
+}
 
 const savedTheme = localStorage.getItem('theme');
 const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -99,6 +107,10 @@ document.addEventListener('keydown', (e) => {
       e.preventDefault();
       githubBtn.click();
       break;
+    case 'f':
+      e.preventDefault();
+      focusBtn.click();
+      break;
     case 'escape':
       e.preventDefault();
       menuItems.classList.add('hidden');
@@ -123,6 +135,14 @@ themeBtn.addEventListener('click', () => {
       isDark ? blueDarkTheme : [],
     ]),
   });
+});
+
+focusBtn.addEventListener('click', () => {
+  isFocused = !isFocused;
+  workspace.classList.toggle('focus-mode', isFocused);
+  focusBtn.classList.toggle('active', isFocused);
+  localStorage.setItem('focus-mode', String(isFocused));
+  toggleMenu();
 });
 
 const applyVimSettings = (binding: string) => {
